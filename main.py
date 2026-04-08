@@ -56,7 +56,7 @@ class Cliente:
         if categoria not in categorie_valide:
             raise ValueError("Categoria non valida, Scegliere tra Gold, Silver e Bronze")
         else:
-            self._category = categoria
+            self._category = categoria #CIAO
 
     def descrizione(self):
         return f"Cliente {self.name} ({self.category}) - {self.mail}"
