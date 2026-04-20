@@ -51,28 +51,29 @@ class Prodotto:
         return self.name == other.name and self.price == other.price and self.quantity==other.quantity and self.supplier == other.supplier
 
     def __lt__(self, other: "Prodotto") -> bool:
-        return self.price < other.price
-    
+        return self.prezzo_finale() < other.prezzo_finale()
+
     def prezzo_finale(self):
-        return self.price*self.quantity
+        return self.price*(1+self.aliquota_iva)
 
 #PRODOTTO SCONTATO
 class ProdottoScontato(Prodotto):
     def __init__(self, name: str, price: float, quantity: int, supplier: str, sconto_percento: float):
-        super().__init__(name, price, quantity, supplier) 
+        super().__init__(name, price, quantity, supplier)
         self.sconto_percento = sconto_percento
-    
+
     def prezzo_finale(self)->float:
         return self.valore_lordo()*(1-self.sconto_percento/100)
-    
+
 #SERVIZI
 class Servizio(Prodotto):
     def __init__(self, name: str, tariffa_oraria: float, ore: int):
         super().__init__(name = name, price = tariffa_oraria, quantity = 1, supplier = None)
         self.ore = ore
-        
+
     def prezzo_finale(self):
         return self.price*self.ore
+
 
 
 #CLIENTE
@@ -121,11 +122,57 @@ print ("Lista di prodotti ordinata")
 for p in mylist:
     print(f" - {p}") #rende la lista ordinata in base al prezzo --> __lt__
 
+myproduct_scontato1 = ProdottoScontato("Auricolari", 100, 1, "ABC", 10)
+myservice1 = Servizio("Consulenza", 100, 3)
+
+mylist.append(myproduct_scontato1)
+mylist.append(myservice1)
+mylist.sort()
+for elem in mylist:
+    print(elem.name,"-->", elem.prezzo_finale()) #Polimorfismo, Duck Typing --> anche se gli elementi sono diversi, hanno tutti un metodo prezzo finale e lo stampa
+
+
 
 c1= Cliente("Mario Bianchi", "mario.bianchi@polito.it", "Gold" )
 print(c1.descrizione())
 c2 = Cliente("Carlo Masone", "carlo.masone@polito.it", "Silver" )
 
 
+#Definire una classe abbonamento che abbia attributi nome prezzo mensile, mesi.
+#l'abbonamento dovra avere un metodo per calcolare il prezzo finale, prezzo mensile * mesi
+#ABBONAMENTO
+class Abbonamento:
+    def __init__(self, name: str, prezzo_mensile: float, mesi: int):
+        self.name = name
+        self.prezzo_mensile = prezzo_mensile
+        self.mesi = mesi
+
+    def prezzo_finale(self):
+        return self.mesi*self.prezzo_mensile
+
+abb=Abbonamento("Software", 30, 24)
+mylist.append(abb)
+for elem in mylist:
+    print(elem.name," - ", elem.prezzo_finale())
+
+def calcola_totale(elementi):
+    tot =0
+    for e in elementi:
+        tot +=e.prezzo_finale()
+    return tot
+print(f"Totale: {calcola_totale(mylist)}")
+
+
+
+
+
+from typing import Protocol
+class HaPrezzoFinale(Protocol):
+    def prezzo_finale(self):
+        ...
+#sto dicendo che c'è un protocollo che nella lista ci siano oggetti solo con il metodo HaPrezzoFinale --> prezzo_finale
+def calcola_totale(elementi:list[HaPrezzoFinale]):
+    return sum(e.prezzo_finale() for e in elementi)
+print(f"Totale: {calcola_totale(mylist)}") #in questa seconda implementazione ho indicato che funzione devono avere per far si di convivere nella lista 
 
 
