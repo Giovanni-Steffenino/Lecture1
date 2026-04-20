@@ -52,8 +52,30 @@ class Prodotto:
 
     def __lt__(self, other: "Prodotto") -> bool:
         return self.price < other.price
+    
+    def prezzo_finale(self):
+        return self.price*self.quantity
+
+#PRODOTTO SCONTATO
+class ProdottoScontato(Prodotto):
+    def __init__(self, name: str, price: float, quantity: int, supplier: str, sconto_percento: float):
+        super().__init__(name, price, quantity, supplier) 
+        self.sconto_percento = sconto_percento
+    
+    def prezzo_finale(self)->float:
+        return self.valore_lordo()*(1-self.sconto_percento/100)
+    
+#SERVIZI
+class Servizio(Prodotto):
+    def __init__(self, name: str, tariffa_oraria: float, ore: int):
+        super().__init__(name = name, price = tariffa_oraria, quantity = 1, supplier = None)
+        self.ore = ore
+        
+    def prezzo_finale(self):
+        return self.price*self.ore
 
 
+#CLIENTE
 class Cliente:
     def __init__(self, name:str, mail, category ):
         self.name = name
@@ -94,7 +116,7 @@ print(p3)
 print("myproduct == p_a", myproduct1==p_a) #va a chiamare il metoto __eq__ appena implementato #ASPETTO TRUE
 print("p_b == p_a", p_b==p_a) #ASPETTO FALSE
 mylist = [p_a,p_b, myproduct1]
-mylist.sort()
+mylist.sort(reverse=True)
 print ("Lista di prodotti ordinata")
 for p in mylist:
     print(f" - {p}") #rende la lista ordinata in base al prezzo --> __lt__
@@ -103,8 +125,6 @@ for p in mylist:
 c1= Cliente("Mario Bianchi", "mario.bianchi@polito.it", "Gold" )
 print(c1.descrizione())
 c2 = Cliente("Carlo Masone", "carlo.masone@polito.it", "Silver" )
-
-
 
 
 
