@@ -1,15 +1,15 @@
 from dataclasses import dataclass
 
-from gestionale.core.cliente import ClienteRecord
-from gestionale.core.prodotto import ProdottoRecord
+from gestionale.core.clienti import ClienteRecord
+from gestionale.core.prodotti import ProdottoRecord
 
 @dataclass
 class RigaOrdine:
     prodotto: ProdottoRecord
-    quantità: int
+    quantita: int
 
     def totale_riga(self):
-        return self.prodotto.prezzo_unitario * self.quantità
+        return self.prodotto.prezzo_unitario * self.quantita
 
 @dataclass
 class Ordine:

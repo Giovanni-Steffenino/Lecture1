@@ -1,4 +1,8 @@
-from gestionale.core.prodotto import ProdottoRecord
+from collections import Counter, deque
+
+from gestionale.core.clienti import ClienteRecord
+from gestionale.core.prodotti import ProdottoRecord
+from gestionale.vendite.ordini import Ordine, RigaOrdine
 
 p1 = ProdottoRecord("Laptop", 1200.0)
 p2= ProdottoRecord("Mouse", 20.0)
@@ -72,9 +76,9 @@ prodotti_codice_B = {ProdottoRecord("Tablet", 700.0)}
 s = set()
 #Aggiungere
 s.add(ProdottoRecord("Laptop", 1200.0))
-s.update([ProdottoRecord("s", 4.0)])
+s.update([ProdottoRecord("ciaooo", 4.0)])
 #Togliere
-s.remove(ProdottoRecord("s", 4.0)) #anche discard e pop (rimuove e restituisce un elemento)
+#s.remove(ProdottoRecord("ciaooo", 4.0)) #anche discard e pop (rimuove e restituisce un elemento)
 
 s1 = set()
 s.union(s1) #set che unisce i due set di partenza
@@ -84,8 +88,105 @@ s1.issubset(s) #True solo se gli elementi di s1 sono contenuti in s
 s1.isdisjoint(s) #True se gli elementi di s e s1 sono diverse
 
 
+#dizionari
+catalogo = {
+    "Lap001" : ProdottoRecord("Laptop", 1200.0),
+    "Lap002" : ProdottoRecord("LaptopPRO", 2300.0),
+    "MAU001" : ProdottoRecord("Mouse", 20.0),
+    "AUR001" : ProdottoRecord("Auricolari", 250.0),
+}
+
+cod = "Lap002"
+prod = catalogo[cod]
+print(f"Il porodotto con codice {cod} è {prod}")
+
+#metodo get del dizionario
+prod1 = catalogo.get("Non esiste")
+if prod1 is None:
+    print("Prodotto non trovato")
+
+prod2 = catalogo.get("Non esiste2", ProdottoRecord("Sconosciuto", 0))
+print(prod2)
+
+keys = list(catalogo.keys())
+values = list(catalogo.values())
+
+for k in keys:
+    print(k)
+for v in values:
+    print(v)
+
+for keys2, values2 in catalogo.items():
+    print(f"Cod {keys2} è associata al val {values2}")
+
+rimosso = catalogo.pop("Lap002")
+print(rimosso)
+
+prezzi = {codice : prod.prezzo_unitario for codice, prod in catalogo.items()}
+print(prezzi)
 
 
+#Esercizio LIVE
+#Per ciascuno dei seguenti casi decidere cosa usare
+
+#1) Memorizzare un elenco di ordini che dovranno essere processati in ordine di arrivo
+ordini_da_processare = []
+o1 = Ordine([], ClienteRecord("Mario Rossi", "mario@polito.it", "Gold"))
+o2 = Ordine([], ClienteRecord("Mario Bianchi", "bianchi@polito.it", "Silver"))
+o3 = Ordine([], ClienteRecord("Fulvio Rossi", "fulvio@polito.it", "Bronze"))
+
+ordini_da_processare.append((o1, 0))
+ordini_da_processare.append((o2, 10))
+ordini_da_processare.append((o3, 3))
+
+#2) Memorizzare i codici fiscali dei clienti, univoco
+codici_fiscali = {"sgagsgdg", "hahdgfwu", "eduwbd56", "hahdgfwu"}
+print(codici_fiscali)
+
+#3) Creare un database di prodotti che posso cercare con un codice univoco
+listino_prodotti = {"Lap001", ProdottoRecord("Laptop", 1200.0),
+                    "Lap002", ProdottoRecord("LaptopPRO", 2300.0), }
+
+#4) Memorizzare le coordinate gps della nuova sede di Roma
+cordinate_Roma = (45, 6)
+
+#5) tenere traccia delle categorie di clienti che hanno fatto un ordine in un certo tempo di ordine temporale
+categorie_periodo = set()
+categorie_periodo.add("Gold")
+categorie_periodo.add("Silver")
+print("======================")
+
+#COUNTER
+lista_clienti = [
+ClienteRecord("Mario Rossi", "mario@polito.it", "Gold"),
+ClienteRecord("Mario Bianchi", "bianchi@polito.it", "Silver"),
+ClienteRecord("Fulvio Rossi", "fulvio@polito.it", "Silver"),
+]
+
+categorie = [c.categoria for c in lista_clienti]
+categorie_counter = Counter(categorie)
+
+print(categorie_counter)
+print(categorie_counter.most_common(2))
+print(categorie_counter.total())
+
+#DEQUE
+coda_ordini = deque()
+
+for i in range(1,10):
+    cliente = ClienteRecord(f"Cliente {i}", f"cliente{i}", "Gold")
+    prodotto = ProdottoRecord(f"Orodotto{i}", 100*i)
+
+    ordine = Ordine([RigaOrdine(prodotto, 1)], cliente)
+    coda_ordini.append(ordine)
+
+print(f"Ordini in coda: {len(coda_ordini)}")
+
+while coda_ordini: #cicla finchè è pieno
+    ordine_corrente = coda_ordini.popleft()
+    print(f"Sto gestendo l'ordine del cliente:{ordine_corrente.cliente}")
+
+print("Ho gestito tutti gli ordini")
 
 
 

@@ -25,3 +25,17 @@ class Prodotto:
     def applica_sconto(prezzo, percentuale):
         return prezzo*(1-percentuale)
 
+@dataclass
+class ProdottoRecord:
+    name: str
+    prezzo_unitario: float
+
+    def __hash__(self):
+        return hash((self.name, self.prezzo_unitario)) #identificare in maniera univoca
+
+    def __eq__(self, other):
+        self.name == other.name
+
+    def __str__(self):
+        return f"{self.name} -- {self.prezzo_unitario}€"
+
